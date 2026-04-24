@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EM High Yield — Study Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#C0392B;--red-light:#FADBD8;--red-mid:#E74C3C;
+  --dark:#1a1a2e;--dark3:#0f3460;
+  --surface:#fff;--surface2:#f8f9fa;--surface3:#f1f3f5;
+  --text:#1a1a2e;--text2:#5a6474;--text3:#9ba3ae;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
+  --radius:12px;--radius-lg:18px;--radius-xl:24px;
+  --shadow:0 2px 12px rgba(0,0,0,0.07);--shadow-lg:0 8px 32px rgba(0,0,0,0.12);
+  --font-display:'DM Serif Display',serif;--font-body:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-body);background:var(--dark);color:var(--text);min-height:100vh;}
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;}
+#screen-auth{background:linear-gradient(135deg,var(--dark) 0%,var(--dark3) 100%);align-items:center;justify-content:center;padding:24px;}
+.auth-card{background:var(--surface);border-radius:var(--radius-xl);padding:40px 32px;width:100%;max-width:420px;box-shadow:var(--shadow-lg);}
+.auth-logo{text-align:center;margin-bottom:28px;}
+.auth-logo .logo-icon{font-size:40px;margin-bottom:8px;}
+.auth-logo h1{font-family:var(--font-display);font-size:28px;color:var(--dark);}
+.auth-logo p{font-size:13px;color:var(--text2);margin-top:4px;}
+.auth-tabs{display:flex;gap:4px;background:var(--surface3);border-radius:var(--radius);padding:4px;margin-bottom:24px;}
+.auth-tab{flex:1;padding:8px;text-align:center;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;color:var(--text2);border:none;background:none;transition:all .2s;}
+.auth-tab.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow);}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.form-group input{width:100%;padding:11px 14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:var(--font-body);font-size:15px;color:var(--text);outline:none;transition:border .2s;background:var(--surface);}
+.form-group input:focus{border-color:var(--red);}
+.btn-primary{width:100%;padding:13px;background:var(--red);color:white;border:none;border-radius:var(--radius);font-family:var(--font-body);font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:4px;}
+.btn-primary:hover{background:var(--red-mid);}
+.btn-primary:disabled{opacity:.6;cursor:default;}
+.auth-error{color:var(--red);font-size:13px;margin-top:10px;text-align:center;display:none;}
+#app-shell{background:var(--surface2);}
+.topbar{background:var(--dark);color:white;padding:0 20px;display:flex;align-items:center;gap:12px;height:56px;position:sticky;top:0;z-index:100;flex-shrink:0;}
+.topbar-logo{font-family:var(--font-display);font-size:20px;color:white;flex:1;}
+.topbar-logo span{color:var(--red-mid);}
+.topbar-user{font-size:13px;color:rgba(255,255,255,.6);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.topbar-badge{background:var(--red);color:white;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;flex-shrink:0;}
+.signout-btn{background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;flex-shrink:0;}
+.bottom-nav{background:var(--dark);position:fixed;bottom:0;left:0;right:0;display:flex;border-top:1px solid rgba(255,255,255,.08);z-index:100;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 8px;cursor:pointer;color:rgba(255,255,255,.4);font-size:10px;font-weight:500;border:none;background:none;gap:4px;transition:color .2s;}
+.nav-item.active{color:var(--red-mid);}
+.nav-icon{font-size:20px;line-height:1;}
+.page{display:none;padding:20px 16px 90px;}
+.page.active{display:block;}
+.page-title{font-family:var(--font-display);font-size:26px;color:var(--dark);margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--text2);margin-bottom:20px;}
+.card{background:var(--surface);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow);margin-bottom:12px;}
+.card-header{display:flex;align-items:flex-start;gap:12px;}
+.chapter-icon{width:44px;height:44px;border-radius:10px;background:var(--red-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.chapter-title{font-weight:600;font-size:15px;color:var(--dark);line-height:1.3;}
+.chapter-meta{font-size:12px;color:var(--text3);margin-top:3px;}
+.card-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.btn-sm{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;font-family:var(--font-body);}
+.btn-read{background:var(--dark);color:white;}
+.btn-quiz{background:var(--red-light);color:var(--red);}
+.btn-outline{background:none;border:1px solid var(--border2);color:var(--text2);}
+.rank-item{display:flex;align-items:center;gap:12px;padding:14px;background:var(--surface);border-radius:var(--radius);margin-bottom:8px;box-shadow:var(--shadow);}
+.rank-num{font-family:var(--font-display);font-size:22px;width:32px;text-align:center;color:var(--text3);flex-shrink:0;}
+.rank-num.gold{color:#f5a623;}
+.rank-num.silver{color:#95a5a6;}
+.rank-num.bronze{color:#b7700d;}
+.rank-avatar{width:40px;height:40px;border-radius:50%;background:var(--dark3);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15px;flex-shrink:0;}
+.rank-score{font-family:var(--font-display);font-size:22px;color:var(--red);}
+.quiz-container{max-width:600px;margin:0 auto;}
+.quiz-progress-bar{height:4px;background:var(--surface3);border-radius:2px;margin-bottom:24px;overflow:hidden;}
+.quiz-progress-fill{height:100%;background:var(--red);border-radius:2px;transition:width .4s;}
+.quiz-question{font-family:var(--font-display);font-size:20px;color:var(--dark);line-height:1.5;margin-bottom:24px;}
+.quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.quiz-opt{padding:14px 16px;border:1.5px solid var(--border2);border-radius:var(--radius);cursor:pointer;font-size:15px;color:var(--text);background:var(--surface);transition:all .15s;text-align:left;font-family:var(--font-body);}
+.quiz-opt:hover:not(:disabled){border-color:var(--red);background:var(--red-light);}
+.quiz-opt.correct{border-color:#27ae60;background:#eafaf1;color:#1e8449;}
+.quiz-opt.wrong{border-color:var(--red);background:var(--red-light);color:var(--red);}
+.quiz-opt.reveal{border-color:#27ae60;background:#eafaf1;color:#1e8449;}
+.quiz-opt.selected-opt{border-color:var(--dark3);background:rgba(15,52,96,.08);font-weight:600;}
+.quiz-opt:disabled{cursor:default;}
+.quiz-explanation{background:var(--surface3);border-radius:var(--radius);padding:14px 16px;font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:16px;border-left:3px solid var(--red);}
+.score-big{font-family:var(--font-display);font-size:72px;color:var(--red);line-height:1;}
+.reader-overlay{position:fixed;inset:0;background:var(--surface);z-index:200;display:none;flex-direction:column;}
+.reader-overlay.open{display:flex;}
+.reader-topbar{background:var(--dark);color:white;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.reader-back{background:none;border:1px solid rgba(255,255,255,.25);color:white;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;font-family:var(--font-body);flex-shrink:0;}
+.reader-title-txt{flex:1;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#reader-iframe{flex:1;border:none;width:100%;background:white;}
+.host-section{margin-bottom:28px;}
+.section-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:10px;}
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
+.stat-box{background:var(--surface);border-radius:var(--radius);padding:14px 12px;text-align:center;box-shadow:var(--shadow);}
+.stat-n{font-family:var(--font-display);font-size:28px;color:var(--dark);}
+.stat-l{font-size:11px;color:var(--text3);margin-top:2px;}
+.host-chapter-item{background:var(--surface);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);}
+.hci-info{flex:1;min-width:0;}
+.hci-name{font-size:14px;font-weight:500;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hci-meta{font-size:11px;color:var(--text3);}
+.btn-danger{background:var(--red-light);color:var(--red);border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer;flex-shrink:0;}
+.btn-success{background:#eafaf1;color:#1e8449;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer;flex-shrink:0;}
+.upload-drop{border:2px dashed var(--border2);border-radius:var(--radius-lg);padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface);margin-bottom:12px;}
+.upload-drop:hover{border-color:var(--red);background:var(--red-light);}
+.member-item{background:var(--surface);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);}
+.mi-avatar{width:36px;height:36px;border-radius:50%;background:var(--dark3);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex-shrink:0;}
+.code-display{background:var(--dark);color:#f5a623;font-family:monospace;font-size:22px;letter-spacing:.15em;text-align:center;padding:16px;border-radius:var(--radius);margin-bottom:10px;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:var(--radius-xl);padding:28px 24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
+.modal h3{font-family:var(--font-display);font-size:22px;margin-bottom:16px;color:var(--dark);}
+.modal textarea{width:100%;min-height:100px;padding:12px;border:1px solid var(--border2);border-radius:var(--radius);font-family:var(--font-body);font-size:14px;resize:vertical;outline:none;margin-bottom:12px;}
+.modal input,.modal select{width:100%;padding:10px 14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:var(--font-body);font-size:14px;outline:none;margin-bottom:10px;}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+.btn-cancel{padding:10px 18px;border:1px solid var(--border2);border-radius:var(--radius);background:none;font-family:var(--font-body);font-size:14px;cursor:pointer;color:var(--text2);}
+.btn-save{padding:10px 18px;border:none;border-radius:var(--radius);background:var(--red);color:white;font-family:var(--font-body);font-size:14px;font-weight:600;cursor:pointer;}
+.loading-spinner{text-align:center;padding:30px;color:var(--text2);font-size:14px;}
+.empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:14px;}
+.qb-q{background:var(--surface3);border-radius:var(--radius);padding:14px;margin-bottom:10px;}
+.qb-q-text{font-size:14px;font-weight:500;margin-bottom:8px;}
+.qb-opt{font-size:13px;padding:3px 0;color:var(--text2);}
+.qb-opt.correct-opt{color:#1e8449;font-weight:600;}
+.upload-item{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;}
+.upload-item-name{font-size:13px;font-weight:500;color:var(--dark);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.up-bar{height:5px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+.up-fill{height:100%;background:var(--red);border-radius:3px;transition:width .3s;}
+.up-status{font-size:11px;color:var(--text3);margin-top:4px;}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--dark);color:white;padding:10px 20px;border-radius:20px;font-size:13px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
+/* ── Leaderboard Tabs ── */
+.lb-tabs{display:flex;gap:4px;background:var(--surface3);border-radius:var(--radius);padding:4px;margin-bottom:16px;}
+.lb-tab{flex:1;padding:9px 4px;text-align:center;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;color:var(--text2);border:none;background:none;transition:all .2s;font-family:var(--font-body);}
+.lb-tab.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow);}
+.lb-empty-tab{text-align:center;padding:32px 16px;color:var(--text3);font-size:13px;}
+.ch-lb-section{background:var(--surface);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow);}
+.ch-lb-header{background:var(--dark);color:white;font-size:13px;font-weight:600;padding:10px 14px;letter-spacing:.02em;}
+.ch-lb-rows{padding:4px 0;}
+.ch-lb-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);}
+.ch-lb-row:last-child{border-bottom:none;}
+.ch-lb-rank{font-size:16px;width:24px;text-align:center;flex-shrink:0;}
+.ch-lb-name{flex:1;font-size:14px;font-weight:500;color:var(--text);}
+.ch-lb-pts{font-family:var(--font-display);font-size:18px;color:var(--red);flex-shrink:0;}
+
+.ch-score-pill{display:inline-block;background:var(--surface3);border-radius:20px;padding:2px 8px;font-size:11px;color:var(--text2);margin:1px 2px;white-space:nowrap;}
+.ch-sub-line{overflow:hidden;}
+/* ── Pool Quiz Card ── */
+.pool-card{background:linear-gradient(135deg,var(--dark) 0%,var(--dark3) 100%);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow-lg);margin-bottom:16px;color:white;}
+.pool-card-title{font-family:var(--font-display);font-size:20px;margin-bottom:4px;}
+.pool-card-sub{font-size:13px;color:rgba(255,255,255,.55);margin-bottom:14px;}
+.pool-card-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.pool-select{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:white;border-radius:8px;padding:7px 10px;font-size:13px;font-family:var(--font-body);outline:none;flex:1;min-width:100px;}
+.pool-select option{background:var(--dark);color:white;}
+.btn-pool{background:var(--red);color:white;border:none;border-radius:8px;padding:9px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-body);flex-shrink:0;transition:background .2s;}
+.btn-pool:hover{background:var(--red-mid);}
+/* ── Timer ── */
+.quiz-timer-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.quiz-timer-display{font-family:monospace;font-size:16px;font-weight:700;color:rgba(255,255,255,.85);letter-spacing:.05em;transition:color .3s;}
+.quiz-timer-display.urgent{color:#f5a623;animation:pulse .8s infinite;}
+.quiz-timer-display.danger{color:var(--red-mid);animation:pulse .4s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+.no-quiz-banner{background:var(--surface3);border-radius:var(--radius);padding:12px 14px;font-size:13px;color:var(--text2);text-align:center;margin-top:10px;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.fade-in{animation:fadeIn .3s ease;}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- AUTH -->
+<div id="screen-auth" class="screen active">
+  <div class="auth-card fade-in">
+    <div class="auth-logo">
+      <div class="logo-icon">🚑</div>
+      <h1>EM High Yield</h1>
+      <p>Emergency Medicine Study Platform</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchTab('register')">Join</button>
+    </div>
+    <div id="tab-login">
+      <div class="form-group"><label>Username</label><input id="login-user" type="text" placeholder="username" autocomplete="username"></div>
+      <div class="form-group"><label>Password</label><input id="login-pass" type="password" placeholder="••••••••"></div>
+      <button class="btn-primary" id="btn-login" onclick="doLogin()">Sign In →</button>
+      <div class="auth-error" id="login-error"></div>
+    </div>
+    <div id="tab-register" style="display:none">
+      <div class="form-group"><label>Invite Code</label><input id="reg-code" type="text" placeholder="Enter invite code"></div>
+      <div class="form-group"><label>Username</label><input id="reg-user" type="text" placeholder="choose a username"></div>
+      <div class="form-group"><label>Password</label><input id="reg-pass" type="password" placeholder="min 6 characters"></div>
+      <button class="btn-primary" id="btn-register" onclick="doRegister()">Create Account →</button>
+      <div class="auth-error" id="reg-error"></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app-shell" class="screen">
+  <div class="topbar">
+    <div class="topbar-logo">EM <span>High Yield</span></div>
+    <span class="topbar-user" id="topbar-user"></span>
+    <span class="topbar-badge" id="topbar-role" style="display:none">HOST</span>
+    <button class="signout-btn" onclick="signOut()">Sign out</button>
+  </div>
+
+  <!-- LIBRARY -->
+  <div class="page active" id="page-library">
+    <div class="page-title">📚 Library</div>
+    <div class="page-sub">Select a chapter to read or quiz</div>
+    <!-- Pool Quiz Card -->
+    <div class="pool-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+        <div class="pool-card-title">🎲 Random Pool Quiz</div>
+        <button id="pool-configure-btn" onclick="navTo('host')" style="display:none;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);border-radius:8px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:var(--font-body);white-space:nowrap;flex-shrink:0">⚙️ Configure</button>
+      </div>
+      <div class="pool-card-sub" id="pool-settings-display">Loading settings…</div>
+      <button class="btn-pool" onclick="startPoolQuiz()">Start Quiz →</button>
+    </div>
+    <div id="chapter-cards"><div class="loading-spinner">⏳ Loading chapters...</div></div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div class="page" id="page-leaderboard">
+    <div class="page-title">🏆 Leaderboard</div>
+    <div class="page-sub">Top scorers this season</div>
+    <div class="lb-tabs">
+      <button class="lb-tab active" id="lb-tab-total"   onclick="switchLbTab('total')">🏅 Total</button>
+      <button class="lb-tab"        id="lb-tab-pool"    onclick="switchLbTab('pool')">🎲 Random</button>
+      <button class="lb-tab"        id="lb-tab-chapter" onclick="switchLbTab('chapter')">📚 Chapter</button>
+    </div>
+    <div id="leaderboard-list"></div>
+  </div>
+
+  <!-- HOST -->
+  <div class="page" id="page-host">
+    <div class="page-title">⚙️ Host Panel</div>
+    <div class="page-sub">Manage your platform</div>
+    <div class="host-section">
+      <div class="section-label">Overview</div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-n" id="hs-chapters">—</div><div class="stat-l">Chapters</div></div>
+        <div class="stat-box"><div class="stat-n" id="hs-members">—</div><div class="stat-l">Members</div></div>
+        <div class="stat-box"><div class="stat-n" id="hs-quizzes">—</div><div class="stat-l">Quizzes</div></div>
+      </div>
+    </div>
+    <div class="host-section">
+      <div class="section-label">Invite Code</div>
+      <div class="code-display" id="code-display">——</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm btn-outline" style="flex:1" onclick="changeCode()">Change</button>
+        <button class="btn-sm btn-read"    style="flex:1" onclick="copyCode()">Copy</button>
+      </div>
+    </div>
+    <div class="host-section">
+      <div class="section-label" style="display:flex;align-items:center;justify-content:space-between">
+        <span>📋 Summarizer → Platform Pipeline</span>
+        <a href="upload-checklist.html" style="font-size:11px;color:var(--red);text-decoration:none;font-weight:600;">View Checklist →</a>
+      </div>
+      <div style="background:var(--surface);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);margin-bottom:8px;">
+        <div style="display:grid;grid-template-columns:28px 1fr;gap:8px 10px;align-items:start;font-size:13px;">
+          <div style="background:var(--dark);color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">1</div>
+          <div><strong>Summarize in Claude Cowork</strong><br><span style="color:var(--text2)">Ask Claude to summarize a chapter → it saves an <code style="background:var(--surface3);padding:1px 5px;border-radius:4px">.html</code> file to <code style="background:var(--surface3);padding:1px 5px;border-radius:4px">summaries/</code></span></div>
+          <div style="background:var(--dark);color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">2</div>
+          <div><strong>Upload the HTML here</strong><br><span style="color:var(--text2)">Tap the upload area below → browse to your <code style="background:var(--surface3);padding:1px 5px;border-radius:4px">summaries/</code> folder → select the chapter file</span></div>
+          <div style="background:var(--dark);color:white;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">3</div>
+          <div><strong>Add a Quiz (optional)</strong><br><span style="color:var(--text2)">Click <strong>✏️ Quiz</strong> next to the chapter below to build MCQ questions for residents</span></div>
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text3);">
+          📁 Summaries folder path: <code style="background:var(--surface3);padding:2px 6px;border-radius:4px;font-size:11px;">ProjectText1 / summaries /</code>
+        </div>
+      </div>
+    </div>
+
+    <div class="host-section">
+      <div class="section-label">Upload Chapters</div>
+      <div class="upload-drop" onclick="document.getElementById('hostFileInput').click()">
+        <div style="font-size:32px">📂</div>
+        <p><strong>Tap to select HTML files</strong></p>
+        <p style="font-size:12px;color:var(--text3);margin-top:4px">Multiple files · Uploaded to Firebase Storage</p>
+      </div>
+      <input type="file" id="hostFileInput" accept=".html,.htm" multiple style="display:none">
+      <div id="upload-progress-area"></div>
+      <div id="host-chapter-list"></div>
+    </div>
+    <div class="host-section">
+      <div class="section-label">🎲 Pool Quiz Settings</div>
+      <div style="background:var(--surface);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)">
+        <div class="form-group">
+          <label>Number of Questions</label>
+          <select id="host-pool-count" style="width:100%;padding:10px 14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:var(--font-body);font-size:14px;outline:none;">
+            <option value="5">5 questions</option>
+            <option value="10">10 questions</option>
+            <option value="20">20 questions</option>
+            <option value="999">All questions</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Time per Question</label>
+          <select id="host-pool-time" style="width:100%;padding:10px 14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:var(--font-body);font-size:14px;outline:none;">
+            <option value="60">1 min / question</option>
+            <option value="90">90 sec / question</option>
+            <option value="120">2 min / question</option>
+            <option value="0">No timer</option>
+          </select>
+        </div>
+        <button class="btn-sm btn-read" style="width:100%;padding:11px;font-size:14px" onclick="savePoolSettings()">💾 Save Settings</button>
+      </div>
+    </div>
+
+    <div class="host-section">
+      <div class="section-label">Leaderboard Control</div>
+      <button class="btn-sm btn-danger" style="width:100%;padding:12px;font-size:14px" onclick="resetScores()">🔄 Reset All Scores</button>
+    </div>
+    <div class="host-section">
+      <div class="section-label">Data Migration</div>
+      <button class="btn-sm" style="width:100%;padding:11px;font-size:13px;background:var(--dark2);color:#fff;border:none;border-radius:8px;cursor:pointer" onclick="fixLegacyAnswers()">🔧 Fix Legacy Quiz Answers (run once)</button>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">Converts old 1-based answer indices to 0-based. Safe to run multiple times.</div>
+    </div>
+    <div class="host-section">
+      <div class="section-label">Members</div>
+      <div id="host-member-list"></div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="navTo('library')"     id="nav-library"><span class="nav-icon">📚</span>Library</button>
+    <button class="nav-item"        onclick="navTo('leaderboard')" id="nav-leaderboard"><span class="nav-icon">🏆</span>Ranks</button>
+    <button class="nav-item"        onclick="navTo('host')"        id="nav-host" style="display:none"><span class="nav-icon">⚙️</span>Host</button>
+  </nav>
+</div>
+
+<!-- READER -->
+<div class="reader-overlay" id="reader-overlay">
+  <div class="reader-topbar">
+    <button class="reader-back" onclick="closeReader()">← Back</button>
+    <div class="reader-title-txt" id="reader-title-txt"></div>
+  </div>
+  <iframe id="reader-iframe" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>
+</div>
+
+<!-- QUIZ -->
+<div class="reader-overlay" id="quiz-overlay">
+  <div class="reader-topbar">
+    <button class="reader-back" onclick="closeQuiz()">← Exit Quiz</button>
+    <div class="reader-title-txt" id="quiz-chapter-name"></div>
+    <div class="quiz-timer-wrap" id="quiz-timer-wrap" style="display:none">
+      <span style="font-size:16px">⏱</span>
+      <span class="quiz-timer-display" id="quiz-timer-display">--:--</span>
+    </div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:20px 16px;">
+    <div class="quiz-container" id="quiz-container"></div>
+  </div>
+</div>
+
+<!-- QUIZ BUILDER MODAL -->
+<div class="modal-overlay" id="quiz-builder-modal">
+  <div class="modal">
+    <h3>✏️ Quiz Editor</h3>
+    <div id="qb-chapter-name" style="font-size:13px;color:var(--text2);margin-bottom:16px"></div>
+    <div id="qb-questions-list"></div>
+    <button class="btn-sm btn-outline" style="width:100%;padding:10px;margin-bottom:12px" onclick="addManualQuestion()">+ Add Question</button>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeQuizBuilder()">Cancel</button>
+      <button class="btn-save"   onclick="saveManualQuiz()">Save to Cloud</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD QUESTION MODAL -->
+<div class="modal-overlay" id="add-question-modal">
+  <div class="modal">
+    <h3>New Question</h3>
+    <div class="form-group"><label>Question</label><textarea id="aq-question" placeholder="Enter your question..."></textarea></div>
+    <div class="form-group"><label>Option A</label><input id="aq-a" type="text" placeholder="Option A"></div>
+    <div class="form-group"><label>Option B</label><input id="aq-b" type="text" placeholder="Option B"></div>
+    <div class="form-group"><label>Option C</label><input id="aq-c" type="text" placeholder="Option C"></div>
+    <div class="form-group"><label>Option D</label><input id="aq-d" type="text" placeholder="Option D"></div>
+    <div class="form-group"><label>Option E <span style="font-weight:400;color:var(--text3)">(optional)</span></label><input id="aq-e" type="text" placeholder="Option E — leave blank for 4-option question"></div>
+    <div class="form-group"><label>Correct Answer</label>
+      <select id="aq-correct">
+        <option value="0">A</option><option value="1">B</option>
+        <option value="2">C</option><option value="3">D</option>
+        <option value="4">E</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Explanation (optional)</label><input id="aq-explain" type="text" placeholder="Why is this correct?"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeAddQ()">Cancel</button>
+      <button class="btn-save"   onclick="confirmAddQ()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc, deleteDoc }
+                            from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getStorage, ref, uploadString, getDownloadURL, deleteObject }
+                            from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCByZ1gm2oStuqi_9BXuA26QOWnKRmbD34",
+  authDomain: "eprj-textsummarizer.firebaseapp.com",
+  projectId: "eprj-textsummarizer",
+  storageBucket: "eprj-textsummarizer.firebasestorage.app",
+  messagingSenderId: "39520423716",
+  appId: "1:39520423716:web:495266620ba680436cadb1"
+};
+
+const app     = initializeApp(firebaseConfig);
+const db      = getFirestore(app);
+const storage = getStorage(app);
+
+// ── utils ──
+const $  = id => document.getElementById(id);
+const toast = (msg, dur=2500) => {
+  const el=$('toast'); el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), dur);
+};
+const showErr = (id, msg) => {
+  const el=$(id); el.textContent=msg; el.style.display='block';
+  setTimeout(()=>el.style.display='none', 3500);
+};
+const formatSize = b => {
+  if(!b) return '';
+  if(b<1024) return b+'B';
+  if(b<1048576) return Math.round(b/1024)+'KB';
+  return (b/1048576).toFixed(1)+'MB';
+};
+const setBtn = (id, html, disabled) => { const b=$(id); b.innerHTML=html; b.disabled=disabled; };
+const esc    = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const jsEsc  = s => String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,"\\'");
+
+// ── state ──
+let currentUser   = null;
+let currentBlobUrl = null;
+let qbChapterId   = null;
+let qbQs          = [];
+
+// ── screens ──
+const showScreen = id => {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+};
+window.switchTab = t => {
+  document.querySelectorAll('.auth-tab').forEach((el,i)=>el.classList.toggle('active', i===(t==='login'?0:1)));
+  $('tab-login').style.display    = t==='login'   ? '' : 'none';
+  $('tab-register').style.display = t==='register'? '' : 'none';
+};
+window.navTo = page => {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  $('page-'+page).classList.add('active');
+  $('nav-'+page).classList.add('active');
+  if(page==='library')     { renderLibrary(); loadPoolSettings(); }
+  if(page==='leaderboard') renderLeaderboard();
+  if(page==='host')        { renderHost(); loadPoolSettings(); }
+};
+
+// ── AUTH ──
+window.doLogin = async () => {
+  const u = $('login-user').value.trim();
+  const p = $('login-pass').value;
+  if(!u||!p){ showErr('login-error','Please enter username and password'); return; }
+  setBtn('btn-login','<span class="spinner"></span>Signing in…', true);
+  try {
+    const snap = await getDoc(doc(db,'users',u));
+    if(!snap.exists()||snap.data().password!==p){ showErr('login-error','Wrong username or password'); return; }
+    currentUser = {username:u, ...snap.data()};
+    launchApp();
+  } catch(e){ showErr('login-error','Connection error: '+e.message); }
+  finally   { setBtn('btn-login','Sign In →', false); }
+};
+
+window.doRegister = async () => {
+  const code = $('reg-code').value.trim();
+  const u    = $('reg-user').value.trim();
+  const p    = $('reg-pass').value;
+  if(!u||u.length<2) return showErr('reg-error','Username must be 2+ characters');
+  if(p.length<6)     return showErr('reg-error','Password must be 6+ characters');
+  setBtn('btn-register','<span class="spinner"></span>Creating…', true);
+  try {
+    const cfgSnap    = await getDoc(doc(db,'config','settings'));
+    const inviteCode = cfgSnap.exists() ? cfgSnap.data().inviteCode : 'EM2024';
+    if(code!==inviteCode){ showErr('reg-error','Wrong invite code'); return; }
+    const existing = await getDoc(doc(db,'users',u));
+    if(existing.exists()){ showErr('reg-error','Username already taken'); return; }
+    await setDoc(doc(db,'users',u),{password:p, role:'member', score:0, quizzesDone:0, createdAt:Date.now()});
+    currentUser = {username:u, role:'member', score:0, quizzesDone:0};
+    launchApp();
+  } catch(e){ showErr('reg-error','Error: '+e.message); }
+  finally   { setBtn('btn-register','Create Account →', false); }
+};
+
+window.signOut = () => { currentUser=null; showScreen('screen-auth'); };
+
+const launchApp = () => {
+  $('topbar-user').textContent       = currentUser.username;
+  const isHost                        = currentUser.role==='host';
+  $('topbar-role').style.display     = isHost ? '' : 'none';
+  $('nav-host').style.display        = isHost ? '' : 'none';
+  $('pool-configure-btn').style.display = isHost ? '' : 'none';
+  showScreen('app-shell');
+  navTo('library');
+};
+
+// ── LIBRARY ──
+const renderLibrary = async () => {
+  const container = $('chapter-cards');
+  container.innerHTML = '<div class="loading-spinner">⏳ Loading chapters...</div>';
+  try {
+    const [chapSnap, mqSnap] = await Promise.all([
+      getDocs(collection(db,'chapters')),
+      getDocs(collection(db,'quizzes'))
+    ]);
+    const chapters = [];
+    chapSnap.forEach(d => chapters.push({id:d.id, ...d.data()}));
+    chapters.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+    const mqIds = new Set(); mqSnap.forEach(d=>mqIds.add(d.id));
+    container.innerHTML = '';
+    if(!chapters.length){
+      container.innerHTML='<div class="empty">📭 No chapters yet.<br>Ask your host to upload content.</div>';
+      return;
+    }
+    const icons=['🫀','🫁','🧠','🦴','🩸','💊','🔬','⚡','🌡️','🩺','🏥','🧬'];
+    // Fetch quiz metadata to check autoImported flag
+    const quizMeta = {};
+    mqSnap.forEach(d => quizMeta[d.id] = d.data());
+
+    chapters.forEach((ch,i)=>{
+      const hasMQ        = mqIds.has(ch.id);
+      const isAutoImport = hasMQ && quizMeta[ch.id]?.autoImported;
+      const safeName     = (ch.displayName||ch.name).replace(/'/g,"\\'");
+      const d            = document.createElement('div');
+      d.className        = 'card fade-in';
+      d.innerHTML = `
+        <div class="card-header">
+          <div class="chapter-icon">${icons[i%icons.length]}</div>
+          <div style="flex:1;min-width:0">
+            <div class="chapter-title">${ch.displayName||ch.name}</div>
+            <div class="chapter-meta">Chapter ${i+1} · ${formatSize(ch.size)}${isAutoImport ? ' · <span style="color:#27ae60;font-weight:600;">⚡ Quiz linked</span>' : ''}</div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-sm btn-read" onclick="openReader('${ch.id}','${safeName}')">📖 Read</button>
+          ${hasMQ
+            ? `<button class="btn-sm btn-quiz" onclick="startQuiz('${ch.id}','${safeName}')">📝 Take Quiz</button>`
+            : `<div class="no-quiz-banner">No quiz available for this chapter yet</div>`
+          }
+        </div>`;
+      container.appendChild(d);
+    });
+  } catch(e){ container.innerHTML=`<div class="empty">Error loading: ${e.message}</div>`; }
+};
+
+// ── READER ──
+window.openReader = async (chapterId, displayName) => {
+  $('reader-title-txt').textContent = displayName;
+  $('reader-overlay').classList.add('open');
+  const iframe = $('reader-iframe');
+  iframe.srcdoc = '<div style="padding:24px;font-family:sans-serif;color:#999;text-align:center">⏳ Loading chapter...</div>';
+  if(currentBlobUrl){ URL.revokeObjectURL(currentBlobUrl); currentBlobUrl=null; }
+  try {
+    const snap = await getDoc(doc(db,'chapters',chapterId));
+    if(!snap.exists()) throw new Error('Chapter not found');
+    const storageRef = ref(storage, snap.data().storagePath);
+    const url        = await getDownloadURL(storageRef);
+    const resp       = await fetch(url);
+    if(!resp.ok) throw new Error('Failed to fetch file');
+    const html       = await resp.text();
+    const blob       = new Blob([html],{type:'text/html'});
+    currentBlobUrl   = URL.createObjectURL(blob);
+    iframe.removeAttribute('srcdoc'); // srcdoc takes precedence over src — must clear it first
+    iframe.src       = currentBlobUrl;
+  } catch(e){
+    iframe.srcdoc = `<div style="padding:24px;font-family:sans-serif;color:red">❌ Error: ${e.message}</div>`;
+  }
+};
+window.closeReader = () => {
+  $('reader-overlay').classList.remove('open');
+  if(currentBlobUrl){ URL.revokeObjectURL(currentBlobUrl); currentBlobUrl=null; }
+  const iframe = $('reader-iframe');
+  iframe.removeAttribute('srcdoc');
+  iframe.src = 'about:blank';
+};
+
+// ── UPLOAD ──
+$('hostFileInput').addEventListener('change', async function(e){
+  const files = Array.from(e.target.files);
+  if(!files.length) return;
+  const area = $('upload-progress-area');
+  area.innerHTML = '';
+
+  for(const file of files){
+    const safeId = file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+    const div    = document.createElement('div'); div.className='upload-item';
+    div.innerHTML=`
+      <div class="upload-item-name">${file.name}</div>
+      <div class="up-bar"><div class="up-fill" id="upbar-${safeId}" style="width:5%"></div></div>
+      <div class="up-status" id="upst-${safeId}">Reading file...</div>`;
+    area.appendChild(div);
+    const bar = () => document.getElementById('upbar-'+safeId);
+    const st  = () => document.getElementById('upst-'+safeId);
+    try {
+      const content = await new Promise((res,rej)=>{
+        const r=new FileReader();
+        r.onload=()=>res(r.result);
+        r.onerror=()=>rej(new Error('Read failed'));
+        r.readAsText(file,'UTF-8');
+      });
+      bar().style.width='40%'; st().textContent='Uploading to Firebase Storage...';
+      const storagePath = `chapters/${safeId}`;
+      const storageRef  = ref(storage, storagePath);
+      await uploadString(storageRef, content, 'raw', {contentType:'text/html'});
+      bar().style.width='70%'; st().textContent='Saving metadata...';
+      const displayName = file.name.replace(/\.html?$/i,'');
+      await setDoc(doc(db,'chapters',safeId),{
+        name: file.name, displayName,
+        size: file.size, storagePath,
+        uploadedAt: Date.now()
+      });
+
+      // ── AUTO-IMPORT EMBEDDED QUIZ ──
+      // Detect "const QUIZ = [...]" written by the Claude summarizer
+      bar().style.width='85%'; st().textContent='Scanning for embedded quiz...';
+      const quizMatch = content.match(/const QUIZ\s*=\s*(\[[\s\S]*?\]);/);
+      if(quizMatch){
+        try {
+          const rawQuiz   = JSON.parse(quizMatch[1]);
+          const questions = rawQuiz.map(item => ({
+            question:    item.q,
+            options:     item.opts,
+            correct:     typeof item.ans === 'number' ? item.ans - 1 : item.ans,
+            explanation: item.exp || ''
+          }));
+          await setDoc(doc(db,'quizzes',safeId),{
+            questions,
+            updatedAt:    Date.now(),
+            autoImported: true,
+            source:       file.name
+          });
+          bar().style.width='100%'; bar().style.background='#27ae60';
+          st().textContent=`✅ Done! Quiz auto-imported (${questions.length} questions)`;
+        } catch(qErr){
+          bar().style.width='100%'; bar().style.background='#27ae60';
+          st().textContent='✅ Uploaded (quiz parse error: '+qErr.message+')';
+        }
+      } else {
+        bar().style.width='100%'; bar().style.background='#27ae60';
+        st().textContent='✅ Done! (no embedded quiz found)';
+      }
+    } catch(err){
+      bar().style.background='var(--red)';
+      st().textContent='❌ '+err.message;
+    }
+  }
+  setTimeout(()=>{ area.innerHTML=''; renderHost(); renderLibrary(); }, 2500);
+  e.target.value='';
+});
+
+// ── TIMER ──
+let _timerInterval = null;
+let _timerSeconds  = 0;
+
+const startTimer = totalSeconds => {
+  stopTimer();
+  if(totalSeconds <= 0){ $('quiz-timer-wrap').style.display='none'; return; }
+  _timerSeconds = totalSeconds;
+  $('quiz-timer-wrap').style.display='';
+  _updateTimerUI();
+  _timerInterval = setInterval(() => {
+    _timerSeconds--;
+    _updateTimerUI();
+    if(_timerSeconds <= 0){
+      stopTimer();
+      _timeUp();
+    }
+  }, 1000);
+};
+
+const stopTimer = () => {
+  if(_timerInterval){ clearInterval(_timerInterval); _timerInterval=null; }
+  $('quiz-timer-wrap').style.display='none';
+};
+
+const _updateTimerUI = () => {
+  const el = $('quiz-timer-display');
+  if(!el) return;
+  const m = Math.floor(_timerSeconds/60);
+  const s = _timerSeconds % 60;
+  el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  el.classList.remove('urgent','danger');
+  if(_timerSeconds <= 30)      el.classList.add('danger');
+  else if(_timerSeconds <= 60) el.classList.add('urgent');
+};
+
+const _timeUp = () => {
+  // Mark remaining questions wrong and show score
+  document.querySelectorAll('.quiz-opt').forEach(o=>o.disabled=true);
+  toast('⏰ Time\'s up!', 2000);
+  setTimeout(()=>{ quizState.current = quizState.questions.length; showQuizScore(); }, 1500);
+};
+
+// ── QUIZ ──
+let quizState = {questions:[], current:0, score:0};
+
+window.startQuiz = async (chapterId, displayName) => {
+  stopTimer();
+  quizState = {questions:[], current:0, score:0, chapterId, displayName};
+  $('quiz-chapter-name').textContent = displayName;
+  $('quiz-overlay').classList.add('open');
+  const container = $('quiz-container');
+  container.innerHTML = '<div class="loading-spinner">⏳ Loading questions...</div>';
+  try {
+    const snap = await getDoc(doc(db,'quizzes',chapterId));
+    if(snap.exists()&&snap.data().questions?.length){
+      quizState.questions = snap.data().questions;
+      renderQuizQ();
+    } else {
+      container.innerHTML='<div class="empty">No questions found for this chapter.</div>';
+    }
+  } catch(e){ container.innerHTML=`<div class="empty">Error: ${e.message}</div>`; }
+};
+
+// ── POOL QUIZ SETTINGS ──
+const TIME_LABELS = {'60':'1 min/Q','90':'90 sec/Q','120':'2 min/Q','0':'No timer'};
+const COUNT_LABELS = {'5':'5 Qs','10':'10 Qs','20':'20 Qs','999':'All Qs'};
+
+const loadPoolSettings = async () => {
+  try {
+    const snap = await getDoc(doc(db,'config','settings'));
+    const data = snap.exists() ? snap.data() : {};
+    const count = String(data.poolQuizCount  || 10);
+    const time  = String(data.poolQuizTimePerQ || 90);
+    // Update display label on Library card
+    const tLabel = TIME_LABELS[time]  || time+'s/Q';
+    const cLabel = COUNT_LABELS[count] || count+' Qs';
+    $('pool-settings-display').textContent =
+      `${cLabel} · ${tLabel} · Shuffled every time · Scores to leaderboard`;
+    // Pre-fill host dropdowns
+    const hc = $('host-pool-count'); if(hc) hc.value = count;
+    const ht = $('host-pool-time');  if(ht) ht.value = time;
+    return { count: parseInt(count), secPerQ: parseInt(time) };
+  } catch(e){ return { count: 10, secPerQ: 90 }; }
+};
+
+window.savePoolSettings = async () => {
+  const count = parseInt($('host-pool-count').value);
+  const time  = parseInt($('host-pool-time').value);
+  try {
+    await setDoc(doc(db,'config','settings'), { poolQuizCount: count, poolQuizTimePerQ: time }, { merge: true });
+    toast('✅ Pool quiz settings saved!');
+    loadPoolSettings();
+  } catch(e){ toast('Error: '+e.message); }
+};
+
+// ── POOL QUIZ ──
+window.startPoolQuiz = async () => {
+  stopTimer();
+  const container = $('quiz-container');
+  $('quiz-chapter-name').textContent = '⏳ Loading pool…';
+  $('quiz-overlay').classList.add('open');
+  container.innerHTML = '<div class="loading-spinner">⏳ Loading question pool…</div>';
+
+  try {
+    // Read settings from Firestore
+    const { count: numQ, secPerQ } = await loadPoolSettings();
+
+    // Fetch all chapter quizzes
+    const snap = await getDocs(collection(db,'quizzes'));
+    let allQ = [];
+    snap.forEach(d => {
+      (d.data().questions || []).forEach(q => allQ.push({...q, _chapterId: d.id}));
+    });
+
+    if(!allQ.length){
+      container.innerHTML='<div class="empty">📭 No questions yet. Upload chapters first.</div>';
+      return;
+    }
+
+    // Fisher-Yates shuffle
+    for(let i = allQ.length-1; i > 0; i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [allQ[i], allQ[j]] = [allQ[j], allQ[i]];
+    }
+    const selected = allQ.slice(0, Math.min(numQ, allQ.length));
+
+    quizState = { questions: selected, current: 0, score: 0, chapterId: '_pool' };
+    $('quiz-chapter-name').textContent = `🎲 Pool Quiz · ${selected.length} Questions`;
+    renderQuizQ();
+
+    if(secPerQ > 0) startTimer(selected.length * secPerQ);
+
+  } catch(e){
+    container.innerHTML=`<div class="empty">Error: ${e.message}</div>`;
+  }
+};
+
+const renderQuizQ = () => {
+  const {questions, current} = quizState;
+  if(current>=questions.length){ showQuizScore(); return; }
+  const q   = questions[current];
+  const pct = Math.round((current/questions.length)*100);
+  const isLast = current === questions.length - 1;
+  let html = '<div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:'+pct+'%"></div></div>';
+  html += '<div style="font-size:12px;color:var(--text3);margin-bottom:12px">Question '+(current+1)+' of '+questions.length+'</div>';
+  html += '<div class="quiz-question">'+q.question+'</div>';
+  html += '<div class="quiz-options" id="quiz-opts-wrap">';
+  q.options.forEach(function(o,i){
+    html += '<button class="quiz-opt" onclick="selectOpt('+i+')" id="quiz-opt-'+i+'">'+String.fromCharCode(65+i)+'. '+o+'</button>';
+  });
+  html += '</div>';
+  html += '<div id="quiz-expl" style="display:none" class="quiz-explanation"></div>';
+  html += '<div id="quiz-submit-row" style="text-align:right;margin-top:12px">';
+  html += '<button class="btn-sm btn-read" id="quiz-submit-btn" onclick="submitAnswer()" disabled style="padding:10px 28px;opacity:.4;cursor:default">Confirm ✓</button>';
+  html += '</div>';
+  html += '<div id="quiz-next" style="display:none;text-align:right;margin-top:8px">';
+  html += '<button class="btn-sm btn-read" onclick="nextQ()" style="padding:10px 28px">'+(isLast?'Finish ✓':'Next →')+'</button>';
+  html += '</div>';
+  $('quiz-container').innerHTML = html;
+  quizState.selected = null;
+};
+
+window.selectOpt = i => {
+  quizState.selected = i;
+  document.querySelectorAll('.quiz-opt').forEach(function(b,j){
+    b.classList.toggle('selected-opt', j===i);
+  });
+  const btn = $('quiz-submit-btn');
+  if(btn){ btn.disabled=false; btn.style.opacity='1'; btn.style.cursor='pointer'; }
+};
+
+window.submitAnswer = () => {
+  if(quizState.selected === null) return;
+  const chosen = quizState.selected;
+  const q = quizState.questions[quizState.current];
+  // Normalize correct index: legacy auto-import data stored 1-based; quiz-builder stores 0-based.
+  // After migration all values are 0-based. Handle both by checking q._base flag (new imports have none).
+  const correctIdx = (q._base === 1) ? q.correct - 1 : q.correct;
+  document.querySelectorAll('.quiz-opt').forEach(function(o){ o.disabled=true; o.classList.remove('selected-opt'); });
+  if(chosen===correctIdx){
+    quizState.score++;
+    document.querySelectorAll('.quiz-opt')[chosen].classList.add('correct');
+  } else {
+    document.querySelectorAll('.quiz-opt')[chosen].classList.add('wrong');
+    if(correctIdx != null && correctIdx >= 0) document.querySelectorAll('.quiz-opt')[correctIdx].classList.add('reveal');
+  }
+  if(q.explanation){
+    const ex=$('quiz-expl'); ex.textContent='💡 '+q.explanation; ex.style.display='';
+  }
+  const sr=$('quiz-submit-row'); if(sr) sr.style.display='none';
+  $('quiz-next').style.display='';
+};
+
+window.nextQ = () => { quizState.current++; renderQuizQ(); };
+
+const showQuizScore = async () => {
+  const {score, questions} = quizState;
+  const pct   = Math.round((score/questions.length)*100);
+  const emoji = pct>=80?'🎉':pct>=60?'👍':'📚';
+  // save score to Firestore — split by quiz type
+  if(currentUser && currentUser.username!=='host'){
+    try{
+      const ref2    = doc(db,'users',currentUser.username);
+      const snap    = await getDoc(ref2);
+      if(snap.exists()){
+        const d     = snap.data();
+        const isPool = quizState.chapterId === '_pool';
+        const updateObj = {
+          score:              (d.score||0) + score,
+          quizzesDone:        (d.quizzesDone||0) + 1,
+          scorePool:          (d.scorePool||0)    + (isPool ? score : 0),
+          scoreChapter:       (d.scoreChapter||0) + (isPool ? 0 : score),
+          poolQuizzesDone:    (d.poolQuizzesDone||0)    + (isPool ? 1 : 0),
+          chapterQuizzesDone: (d.chapterQuizzesDone||0) + (isPool ? 0 : 1),
+        };
+        if(!isPool){
+          const cid = quizState.chapterId;
+          const cname = quizState.displayName || cid;
+          updateObj['chapterScores.'+cid] = ((d.chapterScores||{})[cid]||0) + score;
+          updateObj['chapterNames.'+cid]  = cname;
+        }
+        await updateDoc(ref2, updateObj);
+      }
+    }catch(e){ console.error("Score save error:",e); }
+  }
+  $('quiz-container').innerHTML=`
+    <div style="text-align:center;padding:32px 20px" class="fade-in">
+      <div style="font-size:48px;margin-bottom:8px">${emoji}</div>
+      <div class="score-big">${score}/${questions.length}</div>
+      <div style="font-size:15px;color:var(--text2);margin:8px 0 24px">${pct}% correct</div>
+      <p style="font-size:14px;color:var(--text2);margin-bottom:24px">
+        ${pct>=80?'Excellent work! 🏆':pct>=60?'Good effort — keep going!':'Review the chapter and try again.'}
+      </p>
+      <button class="btn-primary" style="max-width:240px;margin:0 auto;display:block" onclick="closeQuiz()">Done</button>
+    </div>`;
+};
+
+window.closeQuiz = () => {
+  stopTimer();
+  $('quiz-overlay').classList.remove('open');
+};
+
+// ── LEADERBOARD ──
+let _lbTab = 'total';
+let _lbCache = [];
+
+window.switchLbTab = tab => {
+  _lbTab = tab;
+  ['total','pool','chapter'].forEach(t => {
+    $('lb-tab-'+t).classList.toggle('active', t===tab);
+  });
+  _renderLbFromCache();
+};
+
+const renderLeaderboard = async () => {
+  const list = $('leaderboard-list');
+  list.innerHTML = '<div class="loading-spinner">⏳ Loading...</div>';
+  try {
+    const snap = await getDocs(collection(db,'users'));
+    _lbCache = [];
+    snap.forEach(d=>{ if(d.id!=='host') _lbCache.push({...d.data(), name:String(d.id)}); });
+    _renderLbFromCache();
+  } catch(e){ list.innerHTML = '<div class="empty">Error: '+e.message+'</div>'; }
+};
+
+const _renderLbFromCache = () => {
+  const list = document.getElementById("leaderboard-list");
+  if (!list) return;
+  list.innerHTML = "";
+  if (!_lbCache.length) { list.innerHTML = '<div class="empty">No members yet.</div>'; return; }
+
+  const MEDALS = ["🥇","🥈","🥉"];
+  const CLS    = ["gold","silver","bronze"];
+
+  // Build one rank-item element
+  const mkEl = (nm, i, pts, sub) => {
+    const safeName = nm && typeof nm === "string" ? nm : String(nm || "?");
+    const av   = safeName.slice(0, 2).toUpperCase();
+    const rank = i < 3 ? MEDALS[i] : String(i + 1);
+    const el   = document.createElement("div");
+    el.className = "rank-item fade-in";
+    el.innerHTML = '<div class="rank-num ' + (CLS[i] || "") + '">' + rank + '</div>'
+                 + '<div class="rank-avatar">' + av + '</div>'
+                 + '<div style="flex:1">'
+                 +   '<div style="font-weight:500;font-size:15px">' + safeName + '</div>'
+                 +   '<div style="font-size:12px;color:var(--text3)">' + sub + '</div>'
+                 + '</div>'
+                 + '<div class="rank-score">' + pts + 'pts</div>';
+    return el;
+  };
+
+  // TOTAL
+  if (_lbTab === "total") {
+    const r = [..._lbCache].filter(m => (m.score||0) > 0).sort((a,b) => (b.score||0)-(a.score||0));
+    if (!r.length) { list.innerHTML = '<div class="lb-empty-tab">🏅 No scores yet.</div>'; return; }
+    r.forEach((m,i) => list.appendChild(mkEl(m.name, i, m.score||0, (m.quizzesDone||0)+" quizzes done")));
+    return;
+  }
+
+  // RANDOM
+  if (_lbTab === "pool") {
+    const r = [..._lbCache].filter(m => (m.scorePool||0) > 0).sort((a,b) => (b.scorePool||0)-(a.scorePool||0));
+    if (!r.length) { list.innerHTML = '<div class="lb-empty-tab">🎲 No Random scores yet.</div>'; return; }
+    r.forEach((m,i) => list.appendChild(mkEl(m.name, i, m.scorePool||0, (m.poolQuizzesDone||0)+" random quizzes done")));
+    return;
+  }
+
+  // CHAPTER
+  if (_lbTab === "chapter") {
+    const chMap = {};
+    _lbCache.forEach(m => {
+      const cs = m.chapterScores;
+      const cn = m.chapterNames || {};
+      if (cs && typeof cs === "object") {
+        Object.keys(cs).forEach(cid => {
+          // Only use chapterNames value if it is a plain string
+          const rawLbl  = cn[cid];
+          const safeLabel = (rawLbl && typeof rawLbl === "string") ? rawLbl : cid;
+          // Clean label: strip extension, replace underscores
+          const dispLbl = safeLabel.replace(/\.html?$/i,"").replace(/_/g," ").trim();
+          if (!chMap[cid]) chMap[cid] = { label: dispLbl, rows: [] };
+          const rawPts  = cs[cid];
+          const safePts = typeof rawPts === "number" ? rawPts : (Number(rawPts) || 0);
+          chMap[cid].rows.push({ nm: m.name || "?", pts: safePts });
+        });
+      }
+    });
+    const cids = Object.keys(chMap).sort();
+
+    if (cids.length) {
+      cids.forEach(cid => {
+        const ch  = chMap[cid];
+        ch.rows.sort((a,b) => b.pts - a.pts);
+        const lbl = ch.label;  // already cleaned during chMap build
+        const sec = document.createElement("div");
+        sec.className = "ch-lb-section fade-in";
+        let h = '<div class="ch-lb-header">📖 ' + lbl + '</div><div class="ch-lb-rows">';
+        ch.rows.forEach((r,j) => {
+          const rk = j < 3 ? MEDALS[j] : String(j+1);
+          h += '<div class="ch-lb-row"><span class="ch-lb-rank">'+rk+'</span>'
+             + '<span class="ch-lb-name">'+r.nm+'</span>'
+             + '<span class="ch-lb-pts">'+r.pts+' pts</span></div>';
+        });
+        h += '</div>';
+        sec.innerHTML = h;
+        list.appendChild(sec);
+      });
+    } else {
+      // Fallback: rank by scoreChapter (pre-feature data)
+      const r = [..._lbCache].sort((a,b) => (b.scoreChapter||0)-(a.scoreChapter||0));
+      r.forEach((m,i) => list.appendChild(mkEl(m.name, i, m.scoreChapter||0, (m.chapterQuizzesDone||0)+" chapter quizzes done")));
+    }
+    return;
+  }
+};
+
+
+
+
+
+
+// ── HOST PANEL ──
+const renderHost = async () => {
+  try {
+    const [chapSnap,userSnap,quizSnap,cfgSnap] = await Promise.all([
+      getDocs(collection(db,'chapters')),
+      getDocs(collection(db,'users')),
+      getDocs(collection(db,'quizzes')),
+      getDoc(doc(db,'config','settings'))
+    ]);
+    const chapters=[]; chapSnap.forEach(d=>chapters.push({id:d.id,...d.data()}));
+    chapters.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+    const members=[]; userSnap.forEach(d=>{ if(d.id!=='host') members.push({id:d.id,...d.data()}); });
+    const inviteCode = cfgSnap.exists() ? cfgSnap.data().inviteCode : 'EM2024';
+    const mqIds = new Set(); quizSnap.forEach(d=>mqIds.add(d.id));
+    const hostQuizMeta = {}; quizSnap.forEach(d => hostQuizMeta[d.id] = d.data());
+
+    $('hs-chapters').textContent  = chapters.length;
+    $('hs-members').textContent   = members.length;
+    $('hs-quizzes').textContent   = quizSnap.size;
+    $('code-display').textContent = inviteCode;
+
+    const cl = $('host-chapter-list'); cl.innerHTML='';
+    if(!chapters.length){ cl.innerHTML='<div class="empty" style="padding:12px">No chapters yet.</div>'; }
+    chapters.forEach(ch=>{
+      const safeName  = (ch.displayName||ch.name).replace(/'/g,"\\'");
+      const hasQ      = mqIds.has(ch.id);
+      const isAuto    = hasQ && hostQuizMeta[ch.id]?.autoImported;
+      const qCount    = hasQ ? (hostQuizMeta[ch.id]?.questions?.length||0) : 0;
+      const quizLabel = hasQ ? (isAuto ? '⚡ '+qCount+'Q auto-linked' : '✏️ '+qCount+'Q manual') : 'no quiz';
+      const d = document.createElement('div'); d.className='host-chapter-item';
+      d.innerHTML =
+        '<div class="hci-info">'+
+          '<div class="hci-name">'+(ch.displayName||ch.name)+'</div>'+
+          '<div class="hci-meta">'+formatSize(ch.size)+' · '+quizLabel+'</div>'+
+        '</div>'+
+        '<button class="btn-success" onclick="openQuizBuilder(\''+ch.id+'\',\''+safeName+'\')">✏️ Edit Quiz</button>'+
+        '<button class="btn-danger" onclick="deleteChapter(\''+ch.id+'\',\'+'+(ch.storagePath||'')+'\')">Delete</button>';
+      cl.appendChild(d);
+    });
+
+    const ml = $('host-member-list'); ml.innerHTML='';
+    if(!members.length){ ml.innerHTML='<div class="empty">No members yet.</div>'; return; }
+    members.sort((a,b)=>(b.score||0)-(a.score||0)).forEach(m=>{
+      const d = document.createElement('div'); d.className='member-item';
+      d.innerHTML =
+        '<div class="mi-avatar">'+m.id.slice(0,2).toUpperCase()+'</div>'+
+        '<div style="flex:1">'+
+          '<div style="font-weight:500;font-size:14px">'+m.id+'</div>'+
+          '<div style="font-size:12px;color:var(--text3)">'+(m.quizzesDone||0)+' quizzes done</div>'+
+        '</div>'+
+        '<div style="color:var(--red);font-weight:600;font-size:14px;margin-right:8px">'+(m.score||0)+'pts</div>'+
+        '<button class="btn-danger" onclick="removeMember(\''+m.id+'\')">✕</button>';
+      ml.appendChild(d);
+    });
+  } catch(e){ toast('Error loading host panel: '+e.message, 4000); }
+};
+
+window.deleteChapter = async (id, storagePath) => {
+  if(!confirm('Delete this chapter?')) return;
+  try {
+    await deleteDoc(doc(db,'chapters',id));
+    if(storagePath){ try{ await deleteObject(ref(storage,storagePath)); }catch(e){} }
+    toast('Chapter deleted ✅'); renderHost(); renderLibrary();
+  } catch(e){ toast('Error: '+e.message); }
+};
+
+window.resetScores = async () => {
+  if(!confirm('Reset ALL member scores to 0? This cannot be undone.')) return;
+  try {
+    const snap = await getDocs(collection(db,'users'));
+    const updates = [];
+    snap.forEach(d=>{ if(d.id!=='host') updates.push(updateDoc(doc(db,'users',d.id),{
+      score:0, scorePool:0, scoreChapter:0,
+      quizzesDone:0, poolQuizzesDone:0, chapterQuizzesDone:0
+    })); });
+    await Promise.all(updates);
+    toast('✅ All scores reset!'); renderHost();
+  } catch(e){ toast('Error: '+e.message); }
+};
+
+// Migrate all quizzes from 1-based to 0-based correct index (run once after initial import)
+window.fixLegacyAnswers = async () => {
+  if(!confirm('This will scan every quiz in Firestore and convert 1-based answer indices to 0-based.\n\nSafe to run multiple times (skips already-fixed questions).\n\nContinue?')) return;
+  try {
+    const snap = await getDocs(collection(db,'quizzes'));
+    let fixedQuizzes = 0, fixedQuestions = 0;
+    const updates = [];
+    snap.forEach(d => {
+      const data = d.data();
+      if(!data.questions || !Array.isArray(data.questions)) return;
+      let changed = false;
+      const newQs = data.questions.map(q => {
+        // If _base===0 it was already migrated; skip.
+        // If correct >= 1 and no _base flag, assume legacy 1-based.
+        if(q._base === 0) return q;
+        if(typeof q.correct === 'number' && q.correct >= 1){
+          changed = true;
+          fixedQuestions++;
+          return {...q, correct: q.correct - 1, _base: 0};
+        }
+        // correct===0 with no _base: already 0-based (quiz-builder option A), just stamp _base
+        return {...q, _base: 0};
+      });
+      if(changed){
+        fixedQuizzes++;
+        updates.push(updateDoc(doc(db,'quizzes',d.id),{questions: newQs}));
+      }
+    });
+    await Promise.all(updates);
+    toast('✅ Fixed '+fixedQuestions+' questions across '+fixedQuizzes+' quizzes');
+  } catch(e){ toast('Migration error: '+e.message); console.error(e); }
+};
+
+window.removeMember = async u => {
+  if(!confirm('Remove member "'+u+'"?')) return;
+  try { await deleteDoc(doc(db,'users',u)); toast('Member removed'); renderHost(); }
+  catch(e){ toast('Error: '+e.message); }
+};
+
+window.changeCode = async () => {
+  const c = prompt('Enter new invite code:');
+  if(!c||!c.trim()) return;
+  try {
+    await setDoc(doc(db,'config','settings'),{inviteCode:c.trim()},{merge:true});
+    toast('Invite code updated ✅'); renderHost();
+  } catch(e){ toast('Error: '+e.message); }
+};
+
+window.copyCode = async () => {
+  const code = $('code-display').textContent;
+  try { await navigator.clipboard.writeText(code); toast('Copied: '+code); }
+  catch(e){ alert('Code: '+code); }
+};
+
+// ── QUIZ BUILDER ──
+window.openQuizBuilder = async (chapterId, displayName) => {
+  qbChapterId = chapterId;
+  $('qb-chapter-name').textContent = displayName;
+  try {
+    const snap = await getDoc(doc(db,'quizzes',chapterId));
+    qbQs = snap.exists() ? JSON.parse(JSON.stringify(snap.data().questions||[])) : [];
+  } catch(e){ qbQs=[]; }
+  renderQBList();
+  $('quiz-builder-modal').classList.add('open');
+};
+
+const renderQBList = () => {
+  const list = $('qb-questions-list'); list.innerHTML='';
+  if(!qbQs.length){ list.innerHTML='<div class="empty" style="padding:12px">No questions yet.</div>'; return; }
+  qbQs.forEach((q,i)=>{
+    const d = document.createElement('div'); d.className='qb-q';
+    let optsHtml = '';
+    q.options.forEach((o,j)=>{
+      const cls = j===q.correct ? 'qb-opt correct-opt' : 'qb-opt';
+      optsHtml += '<div class="'+cls+'">'+String.fromCharCode(65+j)+'. '+o+'</div>';
+    });
+    const explHtml = q.explanation ? '<div style="font-size:12px;color:var(--text3);margin-top:6px">💡 '+q.explanation+'</div>' : '';
+    d.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">'+
+        '<div class="qb-q-text">Q'+(i+1)+'. '+q.question+'</div>'+
+        '<button class="btn-danger" onclick="removeQ('+i+')">✕</button>'+
+      '</div>'+
+      optsHtml + explHtml;
+    list.appendChild(d);
+  });
+};
+
+window.addManualQuestion = () => $('add-question-modal').classList.add('open');
+
+window.closeAddQ = () => {
+  $('add-question-modal').classList.remove('open');
+  ['aq-question','aq-a','aq-b','aq-c','aq-d','aq-e','aq-explain'].forEach(id=>$(id).value='');
+  $('aq-correct').value='0';
+};
+
+window.confirmAddQ = () => {
+  const q    = $('aq-question').value.trim();
+  const base = ['aq-a','aq-b','aq-c','aq-d'].map(id=>$(id).value.trim());
+  const optE = $('aq-e').value.trim();
+  const opts = optE ? [...base, optE] : base;
+  if(!q||base.some(o=>!o)){ alert('Please fill in question and all 4 base options (A-D)'); return; }
+  const ci = parseInt($('aq-correct').value);
+  if(ci >= opts.length){ alert('Correct answer exceeds number of options'); return; }
+  qbQs.push({ question:q, options:opts, correct:ci, explanation:$('aq-explain').value.trim() });
+  renderQBList(); closeAddQ();
+};
+
+window.removeQ = i => { qbQs.splice(i,1); renderQBList(); };
+window.closeQuizBuilder = () => $('quiz-builder-modal').classList.remove('open');
+
+window.saveManualQuiz = async () => {
+  try {
+    await setDoc(doc(db,'quizzes',qbChapterId),{questions:qbQs, updatedAt:Date.now()});
+    toast('Quiz saved to cloud ✅');
+    closeQuizBuilder(); renderHost(); renderLibrary();
+  } catch(e){ toast('Error saving: '+e.message); }
+};
+
+// ── INIT ──
+(async()=>{
+  try {
+    const [hostSnap,cfgSnap] = await Promise.all([
+      getDoc(doc(db,'users','host')),
+      getDoc(doc(db,'config','settings'))
+    ]);
+    if(!hostSnap.exists())
+      await setDoc(doc(db,'users','host'),{password:'host123',role:'host',score:0,quizzesDone:0});
+    if(!cfgSnap.exists())
+      await setDoc(doc(db,'config','settings'),{inviteCode:'EM2024',poolQuizCount:10,poolQuizTimePerQ:90});
+  } catch(e){ console.warn('Init:',e.message); }
+})();
+
+document.addEventListener('keydown', e => {
+  if(e.key!=='Enter') return;
+  if(!$('screen-auth').classList.contains('active')) return;
+  if($('tab-login').style.display!=='none') doLogin(); else doRegister();
+});
+</script>
+</body>
+</html>

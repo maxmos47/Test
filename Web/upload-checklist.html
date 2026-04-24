@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EM High Yield — Upload Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#C0392B; --red-light:#FADBD8; --red-mid:#E74C3C;
+  --dark:#1a1a2e; --dark3:#0f3460;
+  --surface:#fff; --surface2:#f8f9fa; --surface3:#f1f3f5;
+  --text:#1a1a2e; --text2:#5a6474; --text3:#9ba3ae;
+  --border:rgba(0,0,0,0.08); --border2:rgba(0,0,0,0.14);
+  --radius:12px; --radius-lg:18px;
+  --shadow:0 2px 12px rgba(0,0,0,0.07);
+  --font-display:'DM Serif Display',serif; --font-body:'DM Sans',sans-serif;
+  --green:#27ae60; --green-light:#eafaf1;
+  --orange:#e67e22; --orange-light:#fef9e7;
+  --blue:#2980b9; --blue-light:#ebf5fb;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:var(--font-body); background:var(--dark); min-height:100vh; padding-bottom:48px; }
+
+/* ── Topbar ── */
+.topbar { background:var(--dark); color:white; padding:0 20px; display:flex; align-items:center; gap:12px; height:56px; border-bottom:1px solid rgba(255,255,255,.08); position:sticky; top:0; z-index:10; }
+.topbar-logo { font-family:var(--font-display); font-size:20px; color:white; flex:1; }
+.topbar-logo span { color:var(--red-mid); }
+.topbar-link { background:none; border:1px solid rgba(255,255,255,.2); color:rgba(255,255,255,.7); border-radius:8px; padding:6px 14px; font-size:13px; text-decoration:none; flex-shrink:0; }
+.refresh-btn { background:none; border:1px solid rgba(255,255,255,.2); color:rgba(255,255,255,.7); border-radius:8px; padding:6px 14px; font-size:13px; cursor:pointer; font-family:var(--font-body); flex-shrink:0; }
+.refresh-btn:hover { background:rgba(255,255,255,.08); }
+
+/* ── Container ── */
+.container { max-width:680px; margin:0 auto; padding:24px 16px; }
+.page-title { font-family:var(--font-display); font-size:28px; color:white; margin-bottom:4px; }
+.page-sub { font-size:13px; color:rgba(255,255,255,.45); margin-bottom:24px; }
+
+/* ── Stats row ── */
+.stat-row { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; margin-bottom:24px; }
+.stat-box { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); border-radius:var(--radius); padding:14px 10px; text-align:center; }
+.stat-n { font-family:var(--font-display); font-size:26px; color:white; }
+.stat-l { font-size:11px; color:rgba(255,255,255,.4); margin-top:3px; }
+
+/* ── Section label ── */
+.section-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color:rgba(255,255,255,.35); margin-bottom:10px; margin-top:24px; display:flex; align-items:center; gap:8px; }
+.section-label .count-pill { background:rgba(255,255,255,.1); border-radius:20px; padding:2px 9px; font-size:10px; color:rgba(255,255,255,.5); }
+
+/* ── Chapter cards ── */
+.chapter-card { background:var(--surface); border-radius:var(--radius-lg); padding:14px 16px; margin-bottom:8px; display:flex; align-items:center; gap:12px; }
+.chapter-icon { font-size:26px; flex-shrink:0; width:40px; text-align:center; }
+.chapter-info { flex:1; min-width:0; }
+.chapter-name { font-weight:600; font-size:14px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.chapter-meta { font-size:11px; color:var(--text3); margin-top:3px; display:flex; flex-wrap:wrap; gap:6px; }
+.meta-pill { background:var(--surface3); border-radius:10px; padding:2px 8px; }
+.meta-pill.quiz-auto { background:var(--green-light); color:var(--green); }
+.meta-pill.quiz-manual { background:var(--blue-light); color:var(--blue); }
+.meta-pill.no-quiz { background:var(--orange-light); color:var(--orange); }
+
+.status-badge { border-radius:20px; padding:5px 12px; font-size:12px; font-weight:600; white-space:nowrap; flex-shrink:0; }
+.badge-live    { background:var(--green-light); color:var(--green); }
+.badge-ready   { background:var(--blue-light); color:var(--blue); }
+.badge-pending { background:var(--orange-light); color:var(--orange); }
+.badge-skip    { background:var(--surface3); color:var(--text3); }
+
+/* ── Upload box ── */
+.upload-guide { background:var(--surface); border-radius:var(--radius-lg); padding:18px; margin-top:24px; }
+.upload-guide h3 { font-family:var(--font-display); font-size:18px; color:var(--text); margin-bottom:14px; }
+.upload-step { display:flex; gap:12px; align-items:flex-start; margin-bottom:12px; }
+.step-num { background:var(--dark); color:white; border-radius:50%; width:24px; height:24px; min-width:24px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; margin-top:1px; }
+.step-text { font-size:13px; color:var(--text2); line-height:1.55; }
+.step-text strong { color:var(--text); }
+code { background:var(--surface3); padding:1px 6px; border-radius:4px; font-size:12px; }
+
+.launch-btn { display:block; width:100%; margin-top:16px; padding:13px; background:var(--red); color:white; border:none; border-radius:var(--radius); font-family:var(--font-body); font-size:15px; font-weight:600; cursor:pointer; text-align:center; text-decoration:none; transition:background .2s; }
+.launch-btn:hover { background:var(--red-mid); }
+
+/* ── Loading / empty ── */
+.loading-card { background:rgba(255,255,255,.04); border-radius:var(--radius-lg); padding:20px; text-align:center; color:rgba(255,255,255,.3); font-size:13px; margin-bottom:8px; }
+.spinner-inline { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.15); border-top-color:rgba(255,255,255,.5); border-radius:50%; animation:spin .7s linear infinite; vertical-align:middle; margin-right:6px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.last-updated { font-size:11px; color:rgba(255,255,255,.25); text-align:right; margin-top:8px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">EM <span>High Yield</span></div>
+  <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
+  <a href="index.html" class="topbar-link">← Platform</a>
+</div>
+
+<div class="container">
+  <div class="page-title">📋 Upload Checklist</div>
+  <div class="page-sub">Live status pulled from Firebase · Shows what's uploaded, linked, and pending</div>
+
+  <!-- Stats -->
+  <div class="stat-row">
+    <div class="stat-box"><div class="stat-n" id="st-chapters">—</div><div class="stat-l">Chapters Live</div></div>
+    <div class="stat-box"><div class="stat-n" id="st-quizzes">—</div><div class="stat-l">Quizzes Linked</div></div>
+    <div class="stat-box"><div class="stat-n" id="st-members">—</div><div class="stat-l">Members</div></div>
+    <div class="stat-box"><div class="stat-n" id="st-pending">—</div><div class="stat-l">Pending Upload</div></div>
+  </div>
+
+  <!-- Live chapters -->
+  <div class="section-label">🟢 Live on Platform <span class="count-pill" id="live-count">loading…</span></div>
+  <div id="live-list"><div class="loading-card"><span class="spinner-inline"></span>Connecting to Firebase…</div></div>
+
+  <!-- Ready to upload (local, not yet in Firebase) -->
+  <div class="section-label" id="ready-section-label" style="display:none">📂 Ready to Upload <span class="count-pill" id="ready-count"></span></div>
+  <div id="ready-list"></div>
+
+  <!-- Pending summaries -->
+  <div class="section-label">⏳ Pending Summarization</div>
+  <div id="pending-list"></div>
+
+  <div class="last-updated" id="last-updated"></div>
+
+  <!-- How to upload -->
+  <div class="upload-guide">
+    <h3>🚀 How to Upload a New Chapter</h3>
+    <div class="upload-step">
+      <div class="step-num">1</div>
+      <div class="step-text">Ask Claude to summarize a chapter → it saves an <code>.html</code> file to your <code>summaries/</code> folder</div>
+    </div>
+    <div class="upload-step">
+      <div class="step-num">2</div>
+      <div class="step-text">Sign in to the platform as <strong>host</strong> → go to <strong>⚙️ Host Panel</strong></div>
+    </div>
+    <div class="upload-step">
+      <div class="step-num">3</div>
+      <div class="step-text">Tap <strong>"Upload Chapters"</strong> → select the HTML file from <code>summaries/</code></div>
+    </div>
+    <div class="upload-step">
+      <div class="step-num">4</div>
+      <div class="step-text">The quiz is <strong>auto-imported</strong> from the file — residents can take it immediately</div>
+    </div>
+    <a href="index.html" class="launch-btn">Open Platform → Host Panel</a>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, getDocs, doc, getDoc }
+                            from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCByZ1gm2oStuqi_9BXuA26QOWnKRmbD34",
+  authDomain: "eprj-textsummarizer.firebaseapp.com",
+  projectId: "eprj-textsummarizer",
+  storageBucket: "eprj-textsummarizer.firebasestorage.app",
+  messagingSenderId: "39520423716",
+  appId: "1:39520423716:web:495266620ba680436cadb1"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+
+const formatSize = b => {
+  if(!b) return '';
+  if(b < 1024) return b + 'B';
+  if(b < 1048576) return Math.round(b/1024) + 'KB';
+  return (b/1048576).toFixed(1) + 'MB';
+};
+
+// Known local files ready to upload (not yet in Firebase)
+// Update this list as Claude generates new summaries
+const LOCAL_READY = [
+  { name: 'ATLS11_Ch1_Final.html',  label: 'ATLS 11th Ed. — Chapter 1 (Initial Assessment)', size: '3.9MB', icon: '🦴' },
+  { name: 'ATLS11_Ch2_Final.html',  label: 'ATLS 11th Ed. — Chapter 2 (Shock)',               size: '2.5MB', icon: '🩸' },
+  { name: 'chapter-7-study.html',   label: 'Tintinalli — Ch. 7 (Bomb, Blast & Crush)',        size: '34KB',  icon: '💥' },
+];
+
+// Known textbooks not yet summarized
+const PENDING_BOOKS = [
+  { label: 'ATLS 11th Ed. — Chapters 3 – 12',         icon: '🦴', hint: 'Ask Claude: "Do chapter 3"' },
+  { label: 'Tintinalli EM 9th Ed. — remaining chapters', icon: '📕', hint: 'rosen10th.pdf is available' },
+  { label: 'Goldfrank\'s Toxicologic Emergencies 11th',  icon: '☠️', hint: 'Goldfrank\'s PDF available' },
+  { label: 'PHTLS 10th Edition',                         icon: '🚑', hint: 'PHTLS PDF available' },
+  { label: 'Emergency Medical Services — Vol 1 & 2',     icon: '🚒', hint: 'EMS PDFs available' },
+];
+
+const icons = ['🫀','🫁','🧠','🦴','🩸','💊','🔬','⚡','🌡️','🩺','🏥','🧬'];
+
+window.loadAll = async () => {
+  $('live-list').innerHTML = '<div class="loading-card"><span class="spinner-inline"></span>Loading from Firebase…</div>';
+
+  try {
+    const [chapSnap, quizSnap, userSnap] = await Promise.all([
+      getDocs(collection(db, 'chapters')),
+      getDocs(collection(db, 'quizzes')),
+      getDocs(collection(db, 'users')),
+    ]);
+
+    const chapters = [];
+    chapSnap.forEach(d => chapters.push({ id: d.id, ...d.data() }));
+    chapters.sort((a,b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+    const quizMeta = {};
+    quizSnap.forEach(d => quizMeta[d.id] = d.data());
+
+    const memberCount = [...userSnap.docs].filter(d => d.id !== 'host').length;
+
+    // ── Stats ──
+    const quizzedCount = chapters.filter(ch => quizMeta[ch.id]).length;
+    const liveFileNames = new Set(chapters.map(ch => ch.name));
+    const stillReady    = LOCAL_READY.filter(f => !liveFileNames.has(f.name));
+
+    $('st-chapters').textContent = chapters.length;
+    $('st-quizzes').textContent  = quizzedCount;
+    $('st-members').textContent  = memberCount;
+    $('st-pending').textContent  = stillReady.length + PENDING_BOOKS.length;
+    $('live-count').textContent  = chapters.length + ' chapters';
+
+    // ── Live chapters ──
+    const liveList = $('live-list');
+    if (!chapters.length) {
+      liveList.innerHTML = '<div class="loading-card">No chapters uploaded yet. Upload your first one below.</div>';
+    } else {
+      liveList.innerHTML = '';
+      chapters.forEach((ch, i) => {
+        const qm       = quizMeta[ch.id];
+        const hasQuiz  = !!qm;
+        const isAuto   = hasQuiz && qm.autoImported;
+        const qCount   = hasQuiz ? (qm.questions?.length || 0) : 0;
+        const quizPill = hasQuiz
+          ? (isAuto
+              ? `<span class="meta-pill quiz-auto">⚡ ${qCount}Q auto-linked</span>`
+              : `<span class="meta-pill quiz-manual">✏️ ${qCount}Q manual</span>`)
+          : `<span class="meta-pill no-quiz">⚠️ no quiz yet</span>`;
+
+        const d = document.createElement('div');
+        d.className = 'chapter-card';
+        d.innerHTML = `
+          <div class="chapter-icon">${icons[i % icons.length]}</div>
+          <div class="chapter-info">
+            <div class="chapter-name">${ch.displayName || ch.name}</div>
+            <div class="chapter-meta">
+              <span class="meta-pill">${formatSize(ch.size)}</span>
+              ${quizPill}
+              <span class="meta-pill">${new Date(ch.uploadedAt).toLocaleDateString()}</span>
+            </div>
+          </div>
+          <div class="status-badge badge-live">🟢 Live</div>`;
+        liveList.appendChild(d);
+      });
+    }
+
+    // ── Ready to upload (local files not yet in Firebase) ──
+    const readyList = $('ready-list');
+    readyList.innerHTML = '';
+    if (stillReady.length > 0) {
+      $('ready-section-label').style.display = '';
+      $('ready-count').textContent = stillReady.length + ' files';
+      stillReady.forEach(f => {
+        const d = document.createElement('div');
+        d.className = 'chapter-card';
+        d.innerHTML = `
+          <div class="chapter-icon">${f.icon}</div>
+          <div class="chapter-info">
+            <div class="chapter-name">${f.label}</div>
+            <div class="chapter-meta">
+              <span class="meta-pill">${f.name}</span>
+              <span class="meta-pill">${f.size}</span>
+            </div>
+          </div>
+          <div class="status-badge badge-ready">📂 Ready</div>`;
+        readyList.appendChild(d);
+      });
+    } else {
+      $('ready-section-label').style.display = 'none';
+    }
+
+    // ── Pending books ──
+    const pendingList = $('pending-list');
+    pendingList.innerHTML = '';
+    PENDING_BOOKS.forEach(b => {
+      const d = document.createElement('div');
+      d.className = 'chapter-card';
+      d.style.opacity = '0.65';
+      d.innerHTML = `
+        <div class="chapter-icon">${b.icon}</div>
+        <div class="chapter-info">
+          <div class="chapter-name">${b.label}</div>
+          <div class="chapter-meta"><span class="meta-pill">${b.hint}</span></div>
+        </div>
+        <div class="status-badge badge-pending">⏳ Pending</div>`;
+      pendingList.appendChild(d);
+    });
+
+    $('last-updated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+
+  } catch(e) {
+    $('live-list').innerHTML = `<div class="loading-card">❌ Firebase error: ${e.message}</div>`;
+  }
+};
+
+// Auto-load on open
+loadAll();
+</script>
+</body>
+</html>
